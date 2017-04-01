@@ -24,6 +24,8 @@ public class FishThing {
     public static final int MOVEMENT_DESCENDING = 1;
     public static final int MOVEMENT_SCALE_AND_MOVE = 2;
     public static final int MOVEMENT_SQUASH_AND_MOVE = 3;
+    public static final int MOVEMENT_ZOOM_IN = 4;
+    public static final int MOVEMENT_ZOOM_OUT = 5;
 
     ImageView myBody = null;
     ImageView myEyes = null;
@@ -85,22 +87,66 @@ public class FishThing {
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(myImage, "alpha", 0f, 1f);
         fadeIn.setDuration(1000);
         fadeIn.start();
-
+        
         ImageView myImageMove = myBody;
-        int x1 = (int) myImageMove.getX();
-        int y1 = (int) myImageMove.getY();
-        int x2 = r.nextInt(600);
 
-        ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "x", x1, x2);
+        int whichMovement = r.nextInt(3);
+        
+        if(whichMovement==0)
+        {
+            movementMode=MOVEMENT_LEFT_RIGHT;
+        }
+        else if(whichMovement==1)
+        {
+            movementMode=MOVEMENT_DESCENDING;
+        }
+        else if(whichMovement==2)
+        {
+            movementMode=MOVEMENT_ZOOM_OUT;
+        }
+        
+        if (movementMode==MOVEMENT_LEFT_RIGHT) {
+            int x1 = (int) myImageMove.getX();
+            int y1 = (int) myImageMove.getY();
+            int x2 = r.nextInt(600);
 
-        Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
-        AnimatorSet animatorSet = new AnimatorSet();
+            ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "x", x1, x2);
 
-        mover1.setDuration(1000);
-        mover1.addListener(myAnimationListener);
-        animatorSet.play(mover1);
-        animatorSet.start();
+            Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
+            AnimatorSet animatorSet = new AnimatorSet();
 
+            mover1.setDuration(1000);
+            mover1.addListener(myAnimationListener);
+            animatorSet.play(mover1);
+            animatorSet.start();
+        }
+        else if(movementMode==MOVEMENT_DESCENDING)
+        {
+            int y1 = (int) myImageMove.getY();
+            int y2 = myEyes.getY();
+
+            ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "y", -200, y2);
+
+            Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
+            AnimatorSet animatorSet = new AnimatorSet();
+
+            mover1.setDuration(1000);
+            mover1.addListener(myAnimationListener);
+            animatorSet.play(mover1);
+            animatorSet.start();
+        }
+        else if(movementMode==MOVEMENT_ZOOM_OUT)
+        {
+            ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(myImageMove, "scaleX", 0.5f);
+            ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(myImageMove, "scaleY", 0.5f);
+            scaleDownX.setDuration(1000);
+            scaleDownY.setDuration(1000);
+
+            AnimatorSet scaleDown = new AnimatorSet();
+            scaleDown.addListener(myAnimationListener);
+            scaleDown.play(scaleDownX).with(scaleDownY);
+            scaleDown.start();
+        }
     }
 
 
@@ -137,6 +183,15 @@ public class FishThing {
                     myImageMove.setScaleX(1f);
                     blinkThing();
                 }
+            }
+            else if (movementMode==MOVEMENT_DESCENDING)
+            {
+                blinkThing();
+            }
+            else if(moveMode==MOVEMENT_ZOOM_OUT)
+            {
+                //then move right off the screen and zoom back in?
+                blinkThing();
             }
         }
 
