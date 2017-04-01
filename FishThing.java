@@ -19,12 +19,20 @@ import java.util.Random;
 
 public class FishThing {
 
+    //different movement modes
+    public static final int MOVEMENT_LEFT_RIGHT = 0;
+    public static final int MOVEMENT_DESCENDING = 1;
+    public static final int MOVEMENT_SCALE_AND_MOVE = 2;
+    public static final int MOVEMENT_SQUASH_AND_MOVE = 3;
+
     ImageView myBody = null;
     ImageView myEyes = null;
     boolean goingRight=true;
     boolean blink=false;
     AnimationDrawable blinkAnimation;
     Resources res;
+    int whichFish;
+    int movementMode = MOVEMENT_LEFT_RIGHT;
 
 
     public void setBodyImage(ImageView bodyImage)
@@ -39,22 +47,21 @@ public class FishThing {
     
     public void buildFish()
     {
-        Random r = new Random();
-        
-        int whichFish = r.nextInt(2);
         // build the fish
         Drawable[] layers = new Drawable[4];
         if(whichFish==0)
             layers[0] = res.getDrawable(R.drawable.fishbody1);
-        else
-            layers[1] = res.getDrawable(R.drawable.fishbody2);
-        
-        if(blink=true)
+        else if(whichFish==1)
+            layers[0] = res.getDrawable(R.drawable.orcabody);
+        else if(whichFish==2)
+            layers[0] = res.getDrawable(R.drawable.clownbody);
+
+        if(blink==true)
             layers[1] = res.getDrawable(R.drawable.fisheyesblink);
         else
             layers[1] = res.getDrawable(R.drawable.fisheyes1);
         layers[2] = res.getDrawable(R.drawable.fishmouth1);
-        layers[3] = res.getDrawable(R.drawable.fishaccessory1);
+        layers[3] = res.getDrawable(R.drawable.fishempty);
 
         LayerDrawable layerDrawable = new LayerDrawable(layers);
         myBody.setImageDrawable(layerDrawable);
@@ -63,8 +70,11 @@ public class FishThing {
 
     public void initialiseImage(Resources resIn)
     {
+        Random r = new Random();
         res = resIn;
-        
+
+        whichFish = r.nextInt(3);
+
         buildFish();
         
         //myEyes.setBackgroundResource(R.drawable.fishblink);
@@ -73,7 +83,7 @@ public class FishThing {
         ImageView myImage = myBody;
         myImage.setAlpha(0f);
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(myImage, "alpha", 0f, 1f);
-        fadeIn.setDuration(10000);
+        fadeIn.setDuration(1000);
         fadeIn.start();
 
         ImageView myImageMove = myBody;
@@ -86,7 +96,7 @@ public class FishThing {
         Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
         AnimatorSet animatorSet = new AnimatorSet();
 
-        mover1.setDuration(10000);
+        mover1.setDuration(1000);
         mover1.addListener(myAnimationListener);
         animatorSet.play(mover1);
         animatorSet.start();
@@ -106,25 +116,27 @@ public class FishThing {
             //fadeIn.start();
             Random r = new Random();
 
-            ImageView myImageMove = myBody;
-            if (goingRight == true) {
-                myImageMove.setScaleX(-1f);
-                goingRight = false;
-                int x1 = (int) myImageMove.getX();
-                int y1 = (int) myImageMove.getY();
-                int x2 = r.nextInt(50);
+            if (movementMode==MOVEMENT_LEFT_RIGHT) {
+                ImageView myImageMove = myBody;
+                if (goingRight == true) {
+                    myImageMove.setScaleX(-1f);
+                    goingRight = false;
+                    int x1 = (int) myImageMove.getX();
+                    int y1 = (int) myImageMove.getY();
+                    int x2 = r.nextInt(50);
 
-                ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "x", x1, x2);
-                AnimatorSet animatorSet = new AnimatorSet();
-                Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
-                mover1.addListener(myAnimationListener);
+                    ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "x", x1, x2);
+                    AnimatorSet animatorSet = new AnimatorSet();
+                    Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
+                    mover1.addListener(myAnimationListener);
 
-                mover1.setDuration(10000);
-                animatorSet.play(mover1);
-                animatorSet.start();
-            } else {
-                myImageMove.setScaleX(1f);
-                blinkThing();
+                    mover1.setDuration(1000);
+                    animatorSet.play(mover1);
+                    animatorSet.start();
+                } else {
+                    myImageMove.setScaleX(1f);
+                    blinkThing();
+                }
             }
         }
 
@@ -134,15 +146,18 @@ public class FishThing {
                 @Override
                 public void run() {
                     if(blink==false){
+
                         blink=true;
                         buildFish();
                         blinkThing();
+
                     }
                     else
                     {
                         blink=false;
                         buildFish();
                     }
+                }
             },500);
         }
 
