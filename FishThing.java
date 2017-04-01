@@ -8,6 +8,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -26,6 +27,8 @@ public class FishThing {
     public static final int MOVEMENT_SQUASH_AND_MOVE = 3;
     public static final int MOVEMENT_ZOOM_IN = 4;
     public static final int MOVEMENT_ZOOM_OUT = 5;
+
+    public static final int duration = 1000;
 
     ImageView myBody = null;
     ImageView myEyes = null;
@@ -70,7 +73,7 @@ public class FishThing {
         
     }
 
-    public void initialiseImage(Resources resIn)
+    public void initialiseImage(Resources resIn, int width, int height)
     {
         Random r = new Random();
         res = resIn;
@@ -85,10 +88,13 @@ public class FishThing {
         ImageView myImage = myBody;
         myImage.setAlpha(0f);
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(myImage, "alpha", 0f, 1f);
-        fadeIn.setDuration(1000);
+        fadeIn.setDuration(duration);
         fadeIn.start();
         
         ImageView myImageMove = myBody;
+
+        myBody.setOnTouchListener(new MyTouchListener());
+
 
         int whichMovement = r.nextInt(3);
         
@@ -107,7 +113,6 @@ public class FishThing {
         
         if (movementMode==MOVEMENT_LEFT_RIGHT) {
             int x1 = (int) myImageMove.getX();
-            int y1 = (int) myImageMove.getY();
             int x2 = r.nextInt(600);
 
             ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "x", x1, x2);
@@ -115,7 +120,7 @@ public class FishThing {
             Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
             AnimatorSet animatorSet = new AnimatorSet();
 
-            mover1.setDuration(1000);
+            mover1.setDuration(duration);
             mover1.addListener(myAnimationListener);
             animatorSet.play(mover1);
             animatorSet.start();
@@ -123,14 +128,15 @@ public class FishThing {
         else if(movementMode==MOVEMENT_DESCENDING)
         {
             int y1 = (int) myImageMove.getY();
-            int y2 = myEyes.getY();
+            int y2 = (int) 0;
 
-            ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "y", -200, y2);
+            // a bit of a fudge
+            ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "y", -1000, -1000);
 
             Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
             AnimatorSet animatorSet = new AnimatorSet();
 
-            mover1.setDuration(1000);
+            mover1.setDuration(10);
             mover1.addListener(myAnimationListener);
             animatorSet.play(mover1);
             animatorSet.start();
@@ -139,14 +145,37 @@ public class FishThing {
         {
             ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(myImageMove, "scaleX", 0.5f);
             ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(myImageMove, "scaleY", 0.5f);
-            scaleDownX.setDuration(1000);
-            scaleDownY.setDuration(1000);
+            scaleDownX.setDuration(duration);
+            scaleDownY.setDuration(duration);
 
+            Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
             AnimatorSet scaleDown = new AnimatorSet();
             scaleDown.addListener(myAnimationListener);
             scaleDown.play(scaleDownX).with(scaleDownY);
             scaleDown.start();
         }
+
+    }
+
+    public void blinkThing()
+    {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(blink==false){
+
+                    blink=true;
+                    buildFish();
+                    blinkThing();
+
+                }
+                else
+                {
+                    blink=false;
+                    buildFish();
+                }
+            }
+        },500);
     }
 
 
@@ -161,9 +190,9 @@ public class FishThing {
             //fadeIn.setDuration(2000);
             //fadeIn.start();
             Random r = new Random();
+            ImageView myImageMove = myBody;
 
             if (movementMode==MOVEMENT_LEFT_RIGHT) {
-                ImageView myImageMove = myBody;
                 if (goingRight == true) {
                     myImageMove.setScaleX(-1f);
                     goingRight = false;
@@ -176,7 +205,7 @@ public class FishThing {
                     Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
                     mover1.addListener(myAnimationListener);
 
-                    mover1.setDuration(1000);
+                    mover1.setDuration(duration);
                     animatorSet.play(mover1);
                     animatorSet.start();
                 } else {
@@ -187,34 +216,25 @@ public class FishThing {
             else if (movementMode==MOVEMENT_DESCENDING)
             {
                 blinkThing();
+                int y1 = (int) myImageMove.getY();
+                int y2 = (int) myEyes.getY();
+
+                ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "y", y1, y2);
+
+                AnimatorSet animatorSet = new AnimatorSet();
+
+                mover1.setDuration(duration);
+                animatorSet.play(mover1);
+                animatorSet.start();
             }
-            else if(moveMode==MOVEMENT_ZOOM_OUT)
+            else if(movementMode==MOVEMENT_ZOOM_OUT)
             {
+
                 //then move right off the screen and zoom back in?
                 blinkThing();
             }
         }
 
-        public void blinkThing()
-        {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(blink==false){
-
-                        blink=true;
-                        buildFish();
-                        blinkThing();
-
-                    }
-                    else
-                    {
-                        blink=false;
-                        buildFish();
-                    }
-                }
-            },500);
-        }
 
 
 
@@ -236,4 +256,38 @@ public class FishThing {
 
         }
     }
-}
+
+    public class MyTouchListener implements View.OnTouchListener {
+
+        public MyTouchListener() {
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ImageView myImageMove = (ImageView) v;
+
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+
+                    int y1 = (int) myImageMove.getY();
+                    int y2 = (int) myEyes.getY();
+
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(myImageMove, "scaleY", 0.25f);
+
+                    AnimatorSet animatorSet = new AnimatorSet();
+
+                    scaleDownY.setDuration(duration);
+                    animatorSet.play(scaleDownY);
+                    animatorSet.start();
+
+
+                    blinkThing();
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    }
+
+    }

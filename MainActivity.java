@@ -8,12 +8,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.Random;
 
 public class MainActivity extends Activity {
 
     FishThing myFish = new FishThing();
+    private DatabaseHandler db = new DatabaseHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,26 @@ public class MainActivity extends Activity {
         myFish.setBodyImage((ImageView) findViewById(R.id.imageLight));
         myFish.setEyeImage((ImageView) findViewById(R.id.imageEyes));
 
-        myFish.initialiseImage(getResources());
+        int width = getWindowManager().getDefaultDisplay().getWidth();
+        int height = getWindowManager().getDefaultDisplay().getHeight();
+
+        long lastVisitLong = db.getLastDate();
+
+        TextView myText = (TextView) findViewById(R.id.textMessage);
+
+        if(lastVisitLong==0) {
+            db.createDate();
+            myText.setText("Welcome");
+        }
+        else {
+            //long numDays = db.getNumDaysSinceLastVisit();
+            long numHours = db.getNumHoursSinceLastVisit();
+            db.updateDate();
+            myText.setText("Back again you little sausage");
+
+        }
+
+        myFish.initialiseImage(getResources(), width, height);
 
     }
 
