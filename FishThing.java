@@ -36,19 +36,37 @@ public class FishThing {
         myEyes = eyeImage;
         myEyes.setVisibility(View.INVISIBLE);
     }
+    
+    public void buildFish()
+    {
+        Random r = new Random();
+        
+        int whichFish = r.nextInt(2);
+        // build the fish
+        Drawable[] layers = new Drawable[4];
+        if(whichFish==0)
+            layers[0] = res.getDrawable(R.drawable.fishbody1);
+        else
+            layers[1] = res.getDrawable(R.drawable.fishbody2);
+        
+        if(blink=true)
+            layers[1] = res.getDrawable(R.drawable.fisheyesblink);
+        else
+            layers[1] = res.getDrawable(R.drawable.fisheyes1);
+        layers[2] = res.getDrawable(R.drawable.fishmouth1);
+        layers[3] = res.getDrawable(R.drawable.fishaccessory1);
+
+        LayerDrawable layerDrawable = new LayerDrawable(layers);
+        myBody.setImageDrawable(layerDrawable);
+        
+    }
 
     public void initialiseImage(Resources resIn)
     {
         res = resIn;
-        Random r = new Random();
-
-        Drawable[] layers = new Drawable[2];
-        layers[0] = res.getDrawable(R.drawable.fishbody1);
-        layers[1] = res.getDrawable(R.drawable.fisheyes1);
-
-        LayerDrawable layerDrawable = new LayerDrawable(layers);
-        myBody.setImageDrawable(layerDrawable);
-
+        
+        buildFish();
+        
         //myEyes.setBackgroundResource(R.drawable.fishblink);
         //blinkAnimation = (AnimationDrawable) myEyes.getBackground();
 
@@ -116,26 +134,15 @@ public class FishThing {
                 @Override
                 public void run() {
                     if(blink==false){
-
-                        Drawable[] layers = new Drawable[2];
-                        layers[0] = res.getDrawable(R.drawable.fishbody1);
-                        layers[1] = res.getDrawable(R.drawable.fisheyesblink);
-
-                        LayerDrawable layerDrawable = new LayerDrawable(layers);
-                        myBody.setImageDrawable(layerDrawable);
-                        myEyes.setImageDrawable(res.getDrawable(R.drawable.fisheyesblink));
-                        blinkThing();
                         blink=true;
-
-                    }else{
-                        myEyes.setImageDrawable(res.getDrawable(R.drawable.fisheyes1));
-                        Drawable[] layers = new Drawable[2];
-                        layers[0] = res.getDrawable(R.drawable.fishbody1);
-                        layers[1] = res.getDrawable(R.drawable.fisheyes1);
-
-                        LayerDrawable layerDrawable = new LayerDrawable(layers);
-                        myBody.setImageDrawable(layerDrawable);                    }
-                }
+                        buildFish();
+                        blinkThing();
+                    }
+                    else
+                    {
+                        blink=false;
+                        buildFish();
+                    }
             },500);
         }
 
