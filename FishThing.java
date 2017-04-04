@@ -30,14 +30,26 @@ public class FishThing {
 
     public static final int duration = 1000;
 
+    // counter for regular events
+    int tickCount=5;
+    
+    //set up message handler
+    
     ImageView myBody = null;
     ImageView myEyes = null;
-    boolean goingRight=true;
+    boolean goingRight=true; // whether the fish is going right or not
     boolean blink=false;
     AnimationDrawable blinkAnimation;
     Resources res;
     int whichFish;
-    int movementMode = MOVEMENT_LEFT_RIGHT;
+    int whichMouth;
+    int whichEyes;
+    int whichBackground;
+    int whichTattoo;
+    int movementMode = MOVEMENT_LEFT_RIGHT; // current movement mode
+    boolean fishLocked=true; //whether you can touch it
+    float currentScale=1f; // current zoom mode
+    
 
 
     public void setBodyImage(ImageView bodyImage)
@@ -78,6 +90,7 @@ public class FishThing {
         Random r = new Random();
         res = resIn;
 
+        // TODO, check which fish body to load
         whichFish = r.nextInt(3);
 
         buildFish();
@@ -95,9 +108,12 @@ public class FishThing {
 
         myBody.setOnTouchListener(new MyTouchListener());
 
+        //perhaps send a message to the message handler
+        // give time for the layout to load
+        // so we can get the co-ordinates
 
         int whichMovement = r.nextInt(3);
-        
+        // initial animation
         if(whichMovement==0)
         {
             movementMode=MOVEMENT_LEFT_RIGHT;
@@ -130,7 +146,7 @@ public class FishThing {
             int y1 = (int) myImageMove.getY();
             int y2 = (int) 0;
 
-            // a bit of a fudge
+            // a bit of a fudge, need to fix this
             ObjectAnimator mover1 = ObjectAnimator.ofFloat(myImageMove, "y", -1000, -1000);
 
             Animator.AnimatorListener myAnimationListener = new AnimationAdaptor();
@@ -211,6 +227,8 @@ public class FishThing {
                 } else {
                     myImageMove.setScaleX(1f);
                     blinkThing();
+                    // now run the message handler
+                    fishLocked=false;
                 }
             }
             else if (movementMode==MOVEMENT_DESCENDING)
@@ -232,6 +250,8 @@ public class FishThing {
 
                 //then move right off the screen and zoom back in?
                 blinkThing();
+                // now run the message handler
+                fishLocked=false;
             }
         }
 
