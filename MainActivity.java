@@ -50,7 +50,17 @@ public class MainActivity extends Activity {
             myText.setText("Back again you little sausage");
 
         }
+        
+        // choose which items to show
+        
+        // choose message to display
+        // if it is not a new day then display last message
+        // db.getMessageNumber()
+        // display
+        // db.incMessageNumber()
 
+        // show the fish and let it do it's thing
+        // if it has been a while, display bones
         myFish.initialiseImage(getResources(), width, height);
 
     }
