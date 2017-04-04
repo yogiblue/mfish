@@ -51,6 +51,10 @@ public class MainActivity extends Activity {
 
         }
         
+        //make the circle buttons clickable/touchable
+        // one launches settings
+        // one launches extended information
+        
         // choose which items to show
         
         // choose message to display
