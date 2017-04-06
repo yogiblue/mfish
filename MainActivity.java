@@ -4,8 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,6 +19,8 @@ public class MainActivity extends Activity {
 
     FishThing myFish = new FishThing();
     private DatabaseHandler db = new DatabaseHandler(this);
+    private boolean showingHelp=true;
+   // private messageObject currentMessage=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,46 @@ public class MainActivity extends Activity {
             myText.setText("Back again you little sausage");
 
         }
-        
+
+        ImageView helpImage = (ImageView) findViewById(R.id.imageMore);
+
+        findViewById(R.id.imageMore).setOnClickListener(
+                new View.OnClickListener() {
+
+
+                    public void onClick(View v) {
+                        Context context = getApplicationContext();
+
+
+                        Intent i = new Intent(context, HelpActivity.class);
+
+                        if(showingHelp==true)
+                            i.putExtra("which", -1);
+                        //else
+                        //    i.putExtra("which", currentMessage.getId());
+
+                        startActivity(i);
+
+                    }
+                });
+
+        ImageView settingsImage = (ImageView) findViewById(R.id.imageSettings);
+
+        findViewById(R.id.imageSettings).setOnClickListener(
+                new View.OnClickListener() {
+
+
+                    public void onClick(View v) {
+                        Context context = getApplicationContext();
+
+
+                        Intent i = new Intent(context, SettingsActivityNew.class);
+
+                        startActivity(i);
+
+                    }
+                });
+
         //make the circle buttons clickable/touchable
         // one launches settings
         // one launches extended information
