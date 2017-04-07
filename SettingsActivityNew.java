@@ -123,6 +123,7 @@ public class SettingsActivityNew extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+        setTitle("Extra options");
     }
 
     /**
@@ -188,12 +189,29 @@ public class SettingsActivityNew extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
+
+            final ListPreference listPreference = (ListPreference) findPreference("toys");
+
+            // THIS IS REQUIRED IF YOU DON'T HAVE 'entries' and 'entryValues' in your XML
+            setListPreferenceData(listPreference);
+
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_list"));
+            bindPreferenceSummaryToValue(findPreference("fish_name"));
+            bindPreferenceSummaryToValue(findPreference("toys"));
+
+        }
+
+        protected static void setListPreferenceData(ListPreference lp) {
+
+            //TODO get this out of the database
+            CharSequence[] entries = { "None", "Plant 1" };
+            CharSequence[] entryValues = {"1" , "2"};
+            lp.setEntries(entries);
+            lp.setDefaultValue("1");
+            lp.setEntryValues(entryValues);
         }
 
         @Override
@@ -206,6 +224,7 @@ public class SettingsActivityNew extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+
 
     /**
      * This fragment shows notification preferences only. It is used when the

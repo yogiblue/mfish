@@ -65,6 +65,10 @@ public class HelpActivity extends Activity {
             {
                 myText.setText("You called me from xml dude pup");
             }
+            else if(which==3)
+            {
+                myText.setText("This will be a list activity one day\n\nBreathe in, breathe out. Relax.");
+            }
             else
             {
                 //messageObject myMessage = db.getMessageObject(which);

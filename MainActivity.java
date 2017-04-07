@@ -6,8 +6,10 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -29,6 +31,10 @@ public class MainActivity extends Activity {
 
         RelativeLayout myLayout = (RelativeLayout) findViewById(R.id.test_layout);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String storedPreference = preferences.getString("fish_name", "Mr Fish");
+
         String[] allColors = getResources().getStringArray(R.array.colors);
         int len = allColors.length;
         Random r = new Random();
@@ -42,6 +48,7 @@ public class MainActivity extends Activity {
 
         long lastVisitLong = db.getLastDate();
 
+
         TextView myText = (TextView) findViewById(R.id.textMessage);
 
         if(lastVisitLong==0) {
@@ -52,7 +59,7 @@ public class MainActivity extends Activity {
             //long numDays = db.getNumDaysSinceLastVisit();
             long numHours = db.getNumHoursSinceLastVisit();
             db.updateDate();
-            myText.setText("Back again you little sausage");
+            myText.setText(storedPreference);
 
         }
 
@@ -86,7 +93,6 @@ public class MainActivity extends Activity {
 
                     public void onClick(View v) {
                         Context context = getApplicationContext();
-
 
                         Intent i = new Intent(context, SettingsActivityNew.class);
 
