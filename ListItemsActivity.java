@@ -25,7 +25,7 @@ public class ListItemsActivity extends AppCompatActivity {
         String names = "Check in,Body scan,Pleasantness or not,Mood scan,Five hindrances,Five aggregates,Seven factors of awakening,Craving,Clinging,Cessation,Calming";
         List<String> itemArray_text = Arrays.asList(names.split(","));
         lv.setAdapter(new TextListAdaptor(this, itemArray_text));
-        
+
         lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         lv.setSelector(R.drawable.selector);
 
