@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // TODO clear and set new notifications at this point
+
         RelativeLayout myLayout = (RelativeLayout) findViewById(R.id.test_layout);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
